@@ -12,8 +12,8 @@ case class StationDate(year: Int, month: Int, day: Int) {
   def toLocalDate: LocalDate = LocalDate.of(year, month, day)
 }
 
-case class TemperatureRecord(id: String, day: Int, month: Int, year: Int, temperature: Double)
+case class TemperatureRecord(id: String, year: Int, month: Int, day: Int, temperature: Double)
 
 case class Joined(id: String, latitude:Double, longitude: Double, day: Int, month: Int, year: Int, temperature: Double)
 
-case class JoinedFormat(date: StationDate, location: Location, temperature: Double)
+case class JoinedFormat(id: String, date: StationDate, location: Location, temperature: Double)

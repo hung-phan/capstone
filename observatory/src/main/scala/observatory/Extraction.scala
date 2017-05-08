@@ -48,11 +48,13 @@ object Extraction {
     read(resource)
       .select(
         concat_ws("~", coalesce($"_c0", lit("")), $"_c1").alias("id"),
-        $"_c3".alias("day").cast(IntegerType),
-        $"_c2".alias("month").cast(IntegerType),
         lit(year).as("year"),
+        $"_c2".alias("month").cast(IntegerType),
+        $"_c3".alias("day").cast(IntegerType),
         (($"_c4" - 32) / 9 * 5).alias("temperature").cast(DoubleType)
       )
+      .where($"_c2".between(1, 12))
+      .where($"_c3".between(1, 31))
       .where($"_c4".between(-200, 200))
       .as[TemperatureRecord]
 
@@ -61,10 +63,13 @@ object Extraction {
     getStationsDataFrame(stationsFile)
       .join(getTemperaturesDataFrame(year, temperaturesFile), usingColumn = "id")
       .as[Joined]
-      .map(data =>
-        (StationDate(data.year, data.month, data.day), Location(data.latitude, data.longitude), data.temperature)
-      )
-      .toDF("date", "location", "temperature")
+      .map(data => (
+        data.id,
+        StationDate(data.year, data.month, data.day),
+        Location(data.latitude, data.longitude),
+        data.temperature
+      ))
+      .toDF("id", "date", "location", "temperature")
       .as[JoinedFormat]
 
 
@@ -88,10 +93,10 @@ object Extraction {
     * @return A sequence containing, for each location, the average temperature over the year.
     */
   def locationYearlyAverageRecords(records: Iterable[(LocalDate, Location, Double)]): Iterable[(Location, Double)] = {
-     records
+    records
       .par
       .groupBy(_._2)
       .mapValues(list => list.foldLeft(0.0)((temperature, tuple) => temperature + tuple._3) / list.size)
-       .seq
+      .seq
   }
 }

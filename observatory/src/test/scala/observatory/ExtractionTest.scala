@@ -25,13 +25,9 @@ class ExtractionTest extends FunSuite {
   }
 
   test("Extraction.locateTemperatures should return correct result") {
-    val result = Extraction.getJoinDataFrame(1975, "/stations.csv", "/1975.csv")
-    assert(result.count() == 2176493)
-  }
+    val ds = Extraction.getJoinDataFrame(1975, "/stations.csv", "/1975.csv")
+    assert(ds.count() == 2176493)
 
-  test("Extraction.locateTemperatures should have correct temperature") {
-    val result = Extraction.getJoinDataFrame(2015, "/stations.csv", "/2015.csv").take(3)
-    println(result.mkString("\n"))
+    ds.show(10)
   }
-
 }
