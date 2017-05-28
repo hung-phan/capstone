@@ -27,7 +27,7 @@ class ManipulationTest extends FunSuite with Checkers {
 
 
     assert(gridpoints.size === 360 * 180)
-    assert(gridpoints(360 * 180 - 1) === 0.930407896834476)
+    assert(gridpoints(360 * 180 - 1) === 0.9304078968344792)
   }
 
   test("average") {
